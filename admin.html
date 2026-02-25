@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - StormCreate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#3b82f6', dark: '#0f172a', darker: '#020617' } } } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darker dark:text-gray-100 transition-colors duration-300 font-sans flex flex-col min-h-screen">
+    
+    <!-- Login Section -->
+    <div id="login-section" class="flex-grow flex items-center justify-center px-4 py-12 hidden">
+        <div class="max-w-md w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">StormCreate</h2>
+                <p class="text-gray-500 mt-2">Вход в панель управления</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="login-email" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Пароль</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition">
+                </div>
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-blue-600 text-white rounded-lg font-medium transition flex justify-center items-center">
+                    Войти
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden flex-grow flex flex-col md:flex-row h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-white dark:bg-dark border-r border-gray-200 dark:border-gray-800 flex flex-col h-full">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">StormAdmin</span>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:block"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex items-center gap-4 border-b border-gray-200 dark:border-gray-800">
+                <img id="admin-avatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" class="w-12 h-12 rounded-full border-2 border-primary">
+                <div>
+                    <div class="font-bold text-sm" id="admin-email">admin@example.com</div>
+                    <div class="text-xs text-green-500">Online</div>
+                </div>
+            </div>
+
+            <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
+                <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition bg-primary/10 text-primary font-medium" data-target="dashboard-view">
+                    <i class="fas fa-chart-pie w-5"></i> Дашборд
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400" data-target="posts-view">
+                    <i class="fas fa-file-alt w-5"></i> Посты
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400" data-target="comments-view">
+                    <i class="fas fa-comments w-5"></i> Комментарии
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400" data-target="reviews-view">
+                    <i class="fas fa-star w-5"></i> Отзывы
+                </button>
+                <button class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400" data-target="settings-view">
+                    <i class="fas fa-cog w-5"></i> Настройки
+                </button>
+                <a href="index.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-external-link-alt w-5"></i> На сайт
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-800">
+                <button id="logout-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow bg-gray-50 dark:bg-darker overflow-y-auto p-4 md:p-8">
+            
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-section">
+                <h2 class="text-2xl font-bold mb-6">Обзор</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">Всего постов</p>
+                                <h3 class="text-3xl font-bold" id="stat-posts">0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl"><i class="fas fa-file-alt"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">Просмотров</p>
+                                <h3 class="text-3xl font-bold" id="stat-views">0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xl"><i class="fas fa-eye"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">Комментариев</p>
+                                <h3 class="text-3xl font-bold" id="stat-comments">0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xl"><i class="fas fa-comments"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold mb-4">Статистика просмотров</h3>
+                    <canvas id="viewsChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- Posts View -->
+            <div id="posts-view" class="view-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Управление постами</h2>
+                    <button id="create-post-btn" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Создать пост
+                    </button>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                                    <th class="p-4 font-medium text-gray-500">Заголовок</th>
+                                    <th class="p-4 font-medium text-gray-500">Дата</th>
+                                    <th class="p-4 font-medium text-gray-500">Просмотры</th>
+                                    <th class="p-4 font-medium text-gray-500 text-right">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-posts-list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Posts injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Editor View -->
+            <div id="editor-view" class="view-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold" id="editor-title">Создание поста</h2>
+                    <div class="flex gap-2">
+                        <button id="cancel-edit-btn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg font-medium transition">Отмена</button>
+                        <button id="save-post-btn" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+                            <i class="fas fa-save"></i> Сохранить
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="post-form" class="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <input type="hidden" id="post-id">
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Заголовок</label>
+                        <input type="text" id="post-title" required class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Краткое описание</label>
+                        <textarea id="post-description" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Изображение</label>
+                        <div class="flex flex-col md:flex-row gap-4 items-center">
+                            <input type="file" id="post-image-file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300">
+                            <span class="text-gray-500">или URL:</span>
+                            <input type="url" id="post-image" placeholder="https://..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Теги (через запятую)</label>
+                        <input type="text" id="post-tags" placeholder="telegram, bot, update" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Содержание (Markdown)</label>
+                        <textarea id="post-content"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Comments View -->
+            <div id="comments-view" class="view-section hidden">
+                <h2 class="text-2xl font-bold mb-6">Управление комментариями</h2>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                                    <th class="p-4 font-medium text-gray-500">Автор</th>
+                                    <th class="p-4 font-medium text-gray-500">Текст</th>
+                                    <th class="p-4 font-medium text-gray-500">Дата</th>
+                                    <th class="p-4 font-medium text-gray-500 text-right">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-comments-list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Comments injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews View -->
+            <div id="reviews-view" class="view-section hidden">
+                <h2 class="text-2xl font-bold mb-6">Управление отзывами</h2>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+                                    <th class="p-4 font-medium text-gray-500">Автор</th>
+                                    <th class="p-4 font-medium text-gray-500">Оценка</th>
+                                    <th class="p-4 font-medium text-gray-500">Текст</th>
+                                    <th class="p-4 font-medium text-gray-500">Дата</th>
+                                    <th class="p-4 font-medium text-gray-500 text-right">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-reviews-list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Reviews injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settings-view" class="view-section hidden">
+                <h2 class="text-2xl font-bold mb-6">Настройки сайта</h2>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-gray-500">Здесь можно добавить настройки (например, изменение заголовка на главной, ссылок на соцсети). Для реализации требуется дополнительная коллекция в Firestore.</p>
+                    <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg" onclick="alert('Функция в разработке')">Сохранить настройки</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>
